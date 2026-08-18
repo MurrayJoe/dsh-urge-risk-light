@@ -1,0 +1,75 @@
+{
+  "name": "dsh-urge-risk-light",
+  "version": "0.1.0",
+  "description": "催办风险灯（Urge Risk Light）— 根据流程节点停留时间与 SLA 对比批量判定红/黄/绿催办风险的 DeepSeek Harness 工具插件，含结果卡片与右下角悬浮组件",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./plugin/plugin.js"
+    },
+    "./plugin": "./plugin/plugin.js",
+    "./tool-definition": "./plugin/tool-definition.js",
+    "./display-model": "./plugin/display-model.js",
+    "./widget-model": "./plugin/widget-model.js",
+    "./client": "./dist/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "plugin",
+    "!plugin/host-body.js",
+    "!plugin/runtime-host-body.raw.js",
+    "!plugin/runtime-client-body.raw.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/build-host-body.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test",
+    "verify:install": "node scripts/verify-install.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsh-urge-risk-light/dsh-urge-risk-light.git"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "agent",
+    "workflow",
+    "typescript",
+    "sla",
+    "urge",
+    "risk",
+    "process"
+  ],
+  "dsh": {
+    "client": {
+      "inject": [
+        "slots"
+      ],
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6"
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
+    "jsdom": "^26.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.9.3"
+  }
+}

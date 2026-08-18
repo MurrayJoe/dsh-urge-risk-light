@@ -106,36 +106,50 @@ npm test             # node --test（34 项测试）
 - Schema 通过官方 `@deepseek-ai/dsh-tools` 编译器与校验器（`parameterSchemaSpecToJsonSchema` /
   `valueSchemaSpecToJsonSchema` / `validateJsonSchemaValue` / `defineTool`）。
 
-## 安装
+## 安装（npm 正式包 `dsh-urge-risk-light`）
 
-### 方式一：当前会话动态插件（试验用，重启后失效）
+> 适用于 DSH 2.0（`@deepseek-ai/dsh` 0.1.0-rc.6+）。官方安装路径：把包装入
+> profile 的 `node_modules`（DSH 文档：profile 的 `package.json` 记录树外插件依赖，
+> pnpm 安装到 profile 的 `node_modules`），再在 `cordis.patch.yml` 加一行激活。
 
-```text
-cordis_define（code.host = plugin/runtime-host-body.raw.js 的内容）
-cordis_run   → 工具立即出现在当前 Agent 的工具目录
+```bash
+# 1) 安装包（以 desktop profile 为例）
+cd ~/.dsh/profiles/desktop
+pnpm add dsh-urge-risk-light
+
+# 2) 在 ~/.dsh/profiles/desktop/cordis.patch.yml 追加：
+#    - insert:
+#        - id: tool-urge-risk-light
+#          name: 'dsh-urge-risk-light'
 ```
 
-### 方式二：持久安装（宿主组合行，重启后仍生效）
+3. 重启 DSH 进程。重启后自动加载：Runtime 工具 `analyze_urge_risks`（所有会话可见）
+   与持久化 Client 模块（`dsh.client` 声明 + `exports["./client"]`，web 运行时经
+   `__ModuleLoader__` 装载），注册 `tool.call.toolview` 结果卡片与 `shell.overlay`
+   右下角悬浮组件两个官方槽位。
 
-1. 把本项目链接到 profile 共享存储，使 loader 可解析包名：
-   `ln -s <本项目绝对路径> "$HOME/.dsh/profiles/node_modules/urge-risk-light"`
-2. 在 `$HOME/.dsh/profiles/desktop/cordis.patch.yml` 追加：
+> 临时试用（不安装）：当前会话经 `cordis_define`/`cordis_run` 加载动态插件，
+> 重启后失效，仅用于开发调试。
 
-   ```yaml
-   - insert:
-       - id: tool-urge-risk-light
-         name: 'urge-risk-light/plugin'
-   ```
+### 卸载
 
-3. 重启 DSH 进程后，`analyze_urge_risks` 对所有会话可见。
+```bash
+# 1) 删除 ~/.dsh/profiles/desktop/cordis.patch.yml 中的 tool-urge-risk-light 行
+# 2) 移除依赖
+cd ~/.dsh/profiles/desktop
+pnpm remove dsh-urge-risk-light
+# 3) 重启 DSH
+```
 
-> 持久行同时提供 Host（工具本体）与持久化 Client 模块（结果卡片 + 悬浮组件），
-> 重启 DSH 后自动加载：包名 `urge-risk-light` 声明 `dsh.client` 与
-> `exports["./client"]`（dist/client.js），web 运行时经 `__ModuleLoader__`
-> 装载并注册 `tool.call.toolview` 与 `shell.overlay` 两个官方槽位。
+插件 `apply` 返回注册 disposer：停用/移除时工具、结果卡片与悬浮组件自动撤销，无残留。
 
-> 卸载：删除 patch 行与符号链接即可；`plugin/plugin.js` 的 `apply` 返回注册 disposer，
-> 插件停用/移除时工具自动撤销。
+### 社区插件发现方式
+
+- **npm**：`npm search dsh-urge-risk-light` 或访问
+  https://www.npmjs.com/package/dsh-urge-risk-light ；
+- **GitHub**：https://github.com/MurrayJoe/dsh-urge-risk-light
+  （Topics：`dsh-plugin` / `deepseek-harness` / `agent` / `workflow` / `typescript` / `sla`）；
+- 命名惯例：官方插件为 `@deepseek-ai/dsh-tool-*`（scoped），社区/第三方通常用 `dsh-*` 前缀。
 
 ## 调用示例
 
